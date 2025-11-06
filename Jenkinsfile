@@ -1,6 +1,6 @@
 pipeline {
   agent any
-  tool {git 'Default'}
+  tools {git 'Default'}
 
   environment {
     DEPLOY_USER = 'vagrant'
