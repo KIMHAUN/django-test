@@ -28,7 +28,7 @@ pipeline {
               mkdir -p ${DEPLOY_DIR}
               cd ${DEPLOY_DIR}
               # pull or clone handled by deploy_remote.sh
-              curl -s -o /tmp/deploy_remote.sh https://raw.githubusercontent.com/<YOUR_GITHUB_ID>/<REPO>/${BRANCH}/scripts/deploy_remote.sh
+              curl -s -o /tmp/deploy_remote.sh https://raw.githubusercontent.com/KIMHAUN/django-test/${BRANCH}/scripts/deploy_remote.sh
               chmod +x /tmp/deploy_remote.sh
               /tmp/deploy_remote.sh
             ENDSSH
