@@ -3,10 +3,9 @@ pipeline {
   tools {git 'Default'}
 
   environment {
-    DEPLOY_USER = 'admin
-    '
-    DEPLOY_HOST = 'localhost:8070'
-    DEPLOY_DIR  = '/home/mysite/mysite'
+    DEPLOY_USER = 'DS 13'
+    DEPLOY_HOST = 'localhost'
+    DEPLOY_DIR  = 'D:\\deploy\\djang-otest'
     REPO_URL    = 'https://github.com/KIMHAUN/django-test.git'
     BRANCH      = 'main'
     SSH_CRED_ID = 'deploy-ssh-key'   // Jenkins에 만든 credentials ID
