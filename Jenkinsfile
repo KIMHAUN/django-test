@@ -3,7 +3,8 @@ pipeline {
   tools {git 'Default'}
 
   environment {
-    DEPLOY_USER = 'vagrant'
+    DEPLOY_USER = 'admin
+    '
     DEPLOY_HOST = 'localhost:8070'
     DEPLOY_DIR  = '/home/mysite/mysite'
     REPO_URL    = 'https://github.com/KIMHAUN/django-test.git'
@@ -44,5 +45,6 @@ pipeline {
     failure { echo "Deployment failed" }
   }
 }
+
 
 
