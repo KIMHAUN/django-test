@@ -1,31 +1,45 @@
 pipeline {
   agent any
-  tools {git 'Default'}
-
-  environment {
-    DEPLOY_USER = 'DS 13'
-    DEPLOY_HOST = 'localhost'
-    DEPLOY_DIR  = 'D:\\deploy\\djang-otest'
-    REPO_URL    = 'https://github.com/KIMHAUN/django-test.git'
-    BRANCH      = 'main'
-    SSH_CRED_ID = 'deploy-ssh-key'   // Jenkins에 만든 credentials ID
-  }
 
   stages {
-    stage('Deploy') {
+    stage('Checkout') {
       steps {
-        bat """
-          ssh -i "%SSH_KEY%" -o StrictHostKeyChecking=no "%SSH_USER%"@localhost "echo Connected && whoami"
-        """
+        git branch: 'main', url: 'https://github.com/KIMHAUN/django-test.git'
+      }
+    }
+
+    stage('Build Docker') {
+      steps {
+        sh 'docker build -t wha02068/django:${BUILD_NUMBER} .'
+      }
+    }
+
+    stage('Push Docker') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USER', passwordVariable: 'PASS')]) {
+          sh 'echo $PASS | docker login -u $USER --password-stdin'
+          sh 'docker push wha02068/django:${BUILD_NUMBER}'
+        }
+      }
+    }
+
+    stage('Update k8s yaml') {
+      steps {
+        sh '''
+          sed -i "s|image: .*|image: wha02068/django:${BUILD_NUMBER}|g" k8s/deployment.yaml
+        '''
+      }
+    }
+
+    stage('Push GitHub') {
+      steps {
+        sh '''
+          git config user.email "jenkins@ci"
+          git config user.name "Jenkins CI"
+          git commit -am "Deploy build ${BUILD_NUMBER}"
+          git push origin main
+        '''
       }
     }
   }
-
-  post {
-    success { echo "Deployment succeeded" }
-    failure { echo "Deployment failed" }
-  }
 }
-
-
-
