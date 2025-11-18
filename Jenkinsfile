@@ -18,7 +18,7 @@ pipeline {
         stage('Set Version') {
             steps {
                 script {
-                    env.VERSION = "v${BUILD_NUMBER}"
+                    env.VERSION = "v1.0.${BUILD_NUMBER}"
                     env.IMAGE_TAG = "${DOCKERHUB_REPO}:${env.VERSION}"
 
                     echo "Build Version: ${env.VERSION}"
@@ -47,19 +47,6 @@ pipeline {
             steps {
                 sh """
                 docker push ${IMAGE_TAG}
-                """
-            }
-        }
-
-        stage('Update Deployment YAML') {
-            steps {
-                sh """
-                sed -i "s|image:.*|image: ${IMAGE_TAG}|" k8s/deployment.yaml
-                git config user.email "jenkins@pipeline"
-                git config user.name "jenkins"
-                git add k8s/deployment.yaml
-                git commit -m "Update image to ${env.VERSION}"
-                git push origin main
                 """
             }
         }
