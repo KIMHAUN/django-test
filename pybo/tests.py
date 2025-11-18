@@ -10,4 +10,5 @@ from django.test import TestCase
 #1243
 '''
 안녕하세요 반가워요
+잘있어요
 '''
