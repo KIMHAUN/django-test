@@ -8,3 +8,6 @@ from django.test import TestCase
 #Started by an SCM change 1234
 #1238
 #1243
+'''
+안녕하세요
+'''
