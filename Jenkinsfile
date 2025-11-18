@@ -9,9 +9,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                url: 'git@github.com:KIMHAUN/django-test.git',
-                credentialsId: 'github-ssh-key'
+                echo "Git Repo 최신 내용 가져오기"
+                checkout scm
+
             }
         }
 
