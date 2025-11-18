@@ -13,7 +13,9 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git branch: 'main',
+                url: 'git@github.com:KIMHAUN/django-test.git',
+                credentialsId: 'github-ssh-key'
             }
         }
 
@@ -69,10 +71,10 @@ pipeline {
 
     post {
         success {
-            echo "🎉 성공적으로 Docker Hub push 및 ArgoCD 배포 업데이트 완료!"
+            echo "성공적으로 Docker Hub push 및 ArgoCD 배포 업데이트 완료!"
         }
         failure {
-            echo "❌ 빌드 실패! 콘솔 로그를 확인하세요."
+            echo "빌드 실패! 콘솔 로그를 확인하세요."
         }
     }
 }
