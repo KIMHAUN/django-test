@@ -11,5 +11,5 @@ from django.test import TestCase
 '''
 안녕하세요 반가워요
 잘있어요 다시 만나요
-아침해가 뜨면
+아침해가 뜨면 아침해가뜨면~
 '''
