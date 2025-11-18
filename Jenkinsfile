@@ -58,8 +58,9 @@ pipeline {
                 git config user.email "jenkins@pipeline"
                 git config user.name "jenkins"
 
+                git reset --hard HEAD
                 git pull origin main --rebase
-                
+
                 git add k8s/deployment.yaml
                 git commit -m "Update image to ${env.VERSION}"
                 git push origin main
