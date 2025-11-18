@@ -6,3 +6,4 @@ from django.test import TestCase
 #1220
 #1226
 #Started by an SCM change 1234
+#1238
