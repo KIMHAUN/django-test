@@ -6,10 +6,6 @@ pipeline {
         DOCKERHUB_REPO = "wha02068/django-test"
     }
 
-    triggers {
-        pollSCM('H/1 * * * *')   // 1분마다 Git 변경 체크
-    }
-
     stages {
         stage('Checkout') {
             steps {
