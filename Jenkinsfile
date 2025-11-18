@@ -2,38 +2,77 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "wha02068/django-test"
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+        DOCKERHUB_REPO = "wha02068/django-test"
+    }
+
+    triggers {
+        pollSCM('H/1 * * * *')   // 1분마다 Git 변경 체크
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/KIMHAUN/django-test.git'
+                checkout scm
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Set Version') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:${BUILD_NUMBER} .'
+                script {
+                    env.VERSION = "v${BUILD_NUMBER}"
+                    env.IMAGE_TAG = "${DOCKERHUB_REPO}:${env.VERSION}"
+
+                    echo "Build Version: ${env.VERSION}"
+                    echo "Docker Image Tag: ${env.IMAGE_TAG}"
+                }
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Docker Build') {
             steps {
-                sh 'docker push $IMAGE_NAME:${BUILD_NUMBER}'
+                sh """
+                docker build -t ${IMAGE_TAG} .
+                """
+            }
+        }
+
+        stage('Docker Login') {
+            steps {
+                sh """
+                echo "${DOCKERHUB_CREDENTIALS_PSW}" | docker login -u "${DOCKERHUB_CREDENTIALS_USR}" --password-stdin
+                """
+            }
+        }
+
+        stage('Docker Push') {
+            steps {
+                sh """
+                docker push ${IMAGE_TAG}
+                """
             }
         }
 
         stage('Update Deployment YAML') {
             steps {
-                sh '''
-                cd k8s
-                sed -i "s|image:.*|image: $IMAGE_NAME:${BUILD_NUMBER}|" deployment.yaml
-                git add deployment.yaml
-                git commit -m "Update image to ${BUILD_NUMBER}"
-                git push
-                '''
+                sh """
+                sed -i "s|image:.*|image: ${IMAGE_TAG}|" k8s/deployment.yaml
+                git config user.email "jenkins@pipeline"
+                git config user.name "jenkins"
+                git add k8s/deployment.yaml
+                git commit -m "Update image to ${env.VERSION}"
+                git push origin main
+                """
             }
+        }
+    }
+
+    post {
+        success {
+            echo "🎉 성공적으로 Docker Hub push 및 ArgoCD 배포 업데이트 완료!"
+        }
+        failure {
+            echo "❌ 빌드 실패! 콘솔 로그를 확인하세요."
         }
     }
 }
