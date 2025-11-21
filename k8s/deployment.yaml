@@ -16,7 +16,7 @@ spec:
         role: django
       containers:
       - name: django-test
-        image: wha02068/django-test:v21
+        image: wha02068/django-test:v1.0.12
         ports:
         - containerPort: 8000
 
