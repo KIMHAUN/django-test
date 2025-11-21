@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: django-test
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
       app: django-test
@@ -12,6 +12,8 @@ spec:
       labels:
         app: django-test
     spec:
+      nodeSelector:
+        role: django
       containers:
       - name: django-test
         image: wha02068/django-test:v21
