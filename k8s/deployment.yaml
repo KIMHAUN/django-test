@@ -19,3 +19,12 @@ spec:
         image: wha02068/django-test:v21
         ports:
         - containerPort: 8000
+
+        volumeMounts:
+        - name: sqlite-storage
+          mountPath: /app/data   # SQLite 저장 위치
+
+      volumes:
+      - name: sqlite-storage
+        persistentVolumeClaim:
+          claimName: sqlite-pvc
